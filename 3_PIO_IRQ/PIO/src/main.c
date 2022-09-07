@@ -69,7 +69,11 @@ volatile char but_flag;
 
 void but_callback(void)
 {
-  but_flag = 1;
+  if (pio_get(BUT_PIO, PIO_INPUT, BUT_IDX_MASK)) {
+	  // PINO == 1 --> Borda de subida
+	  } else {
+	  // PINO == 0 --> Borda de descida
+  }
 }
 
 /************************************************************************/
@@ -108,7 +112,7 @@ void io_init(void)
   pio_handler_set(BUT_PIO,
                   BUT_PIO_ID,
                   BUT_IDX_MASK,
-                  PIO_IT_RISE_EDGE,
+                  PIO_IT_EDGE,
                   but_callback);
 
   // Ativa interrupção e limpa primeira IRQ gerada na ativacao
@@ -134,8 +138,8 @@ void main(void)
 	// Desativa watchdog
 	WDT->WDT_MR = WDT_MR_WDDIS;
 
-  // configura botao com interrupcao
-  io_init();
+	// configura botao com interrupcao
+	io_init();
 
 	// super loop
 	// aplicacoes embarcadas no devem sair do while(1).
